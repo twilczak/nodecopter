@@ -9,6 +9,7 @@
   "author": "Tom Wilczak tom.wilczak@gmail.com https://github.com/twilczak",
   "license": "ISC",
   "dependencies": {
-    "ar-drone": "^0.3.3"
+    "ar-drone": "^0.3.3",
+    "ffmpeg": "0.0.4"
   }
 }
