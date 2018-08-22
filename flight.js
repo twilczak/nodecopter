@@ -20,35 +20,38 @@ function fly(client) {
 
 function server(client, opts, onLoad) {
   let png = null;
+  let pngdata = null;
   let loaded = false;
 
   opts = opts || {};
   
   const server = http.createServer(function(req, res) {
+    console.log(req.url);
 
     if (!png) {
       png = client.getPngStream();
       png.on('error', function (err) {
           console.error('png stream ERROR: ' + err);
       });
-    }
-
-    const requestUrl = req.url;
-
-    if(requestUrl === '/image') {
       png.on('data', (data) => {
-
         if(!loaded){
           loaded = true;
           console.log('read to fly');
           onLoad();
         }
-
-        console.log(data.length);
-        res.writeHead(200, {'Content-Type': 'multipart/x-mixed-replace; boundary=--daboundary',});
-        res.write('--daboundary\nContent-Type: image/png\nContent-length: ' + data.length + '\n\n');
-        res.write(data);
+        pngdata = data;
       });
+    }
+
+    const requestUrl = req.url;
+
+    if(requestUrl === '/image' && pngdata) {
+
+      console.log(pngdata.length);
+      res.writeHead(200, {'Content-Type': 'multipart/x-mixed-replace; boundary=--daboundary',});
+      res.write('--daboundary\nContent-Type: image/png\nContent-length: ' + pngdata.length + '\n\n');
+      res.write(pngdata);
+      res.end();
     } else if(requestUrl === '/') {
       fs.readFile('./index.html',function (err, data){
         res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
