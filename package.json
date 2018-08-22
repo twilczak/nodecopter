@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "ar-drone": "^0.3.3",
+    "ar-drone-png-stream": "^2.0.0",
     "ffmpeg": "0.0.4"
   }
 }
