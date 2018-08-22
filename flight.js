@@ -1,5 +1,5 @@
 const arDrone = require('ar-drone');
-const http = require('http')
+const http = require('http');
 const client = arDrone.createClient();
 client.config('control:altitude_max', 3000);
 
@@ -18,12 +18,12 @@ function fly(client) {
 }
 
 function server(client, opts, onLoad) {
-  var png = null;
-  var loaded = false;
+  let png = null;
+  let loaded = false;
 
   opts = opts || {};
   
-  var server = http.createServer(function(req, res) {
+  const server = http.createServer(function(req, res) {
 
     if (!png) {
       png = client.getPngStream();
@@ -37,7 +37,7 @@ function server(client, opts, onLoad) {
     png.on('data', (d) => {
       if(!loaded){
         loaded = true;
-        console.log('read to fly')
+        console.log('read to fly');
         onLoad();
       }
       sendPng(d)
@@ -51,6 +51,6 @@ function server(client, opts, onLoad) {
   });
 
   server.listen(opts.port || 8000);
-};
+}
 
-server(client,{ port: 8000 },() => fly(client))
+server(client,{ port: 8000 },() => fly(client));
