@@ -6,13 +6,14 @@ const output = require('fs').createWriteStream('./vid.h264');
 client.config('control:altitude_max', 3000);
 
 const video = client.getVideoStream();
-video.on('data', console.log);
+// video.on('data', console.log);
 video.on('error', console.log);
 
 const parser = new PaVEParser();
 
 parser
   .on('data', function(data) {
+    console.log(data);
     output.write(data.payload);
   })
   .on('end', function() {
