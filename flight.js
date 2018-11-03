@@ -24,7 +24,7 @@ function server(client, opts, onLoad) {
   let loaded = false;
 
   opts = opts || {};
-  
+
   const server = http.createServer(function(req, res) {
     console.log(req.url);
 
@@ -45,7 +45,7 @@ function server(client, opts, onLoad) {
 
     const requestUrl = req.url;
 
-    if(requestUrl === '/image' && pngdata) {
+    if(requestUrl.startsWith('/image') && pngdata) {
 
       console.log(pngdata.length);
       res.writeHead(200, {'Content-Type': 'multipart/x-mixed-replace; boundary=--daboundary',});

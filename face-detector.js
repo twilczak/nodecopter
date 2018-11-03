@@ -3,9 +3,9 @@ const faceDiv = document.getElementById('faces');
 
 window.setInterval(() => {
     console.log('interval');
-      myImage.src = `http://localhost:8000/image?q=${(new Date()).getMilliseconds()}`;
+      myImage.src = `http://localhost:8000/image?q=${(new Date()).valueOf()}`;
       detect();
-    }, 1000);
+    }, 100);
 
 function detect() {
     const faceDetector = new window.FaceDetector();
