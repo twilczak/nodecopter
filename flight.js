@@ -26,7 +26,7 @@ function server(client, opts, onLoad) {
   opts = opts || {};
 
   const server = http.createServer(function(req, res) {
-    console.log(req.url);
+    // console.log(req.url);
 
     if (!png) {
       png = client.getPngStream();
@@ -47,7 +47,6 @@ function server(client, opts, onLoad) {
 
     if(requestUrl.startsWith('/image') && pngdata) {
 
-      console.log(pngdata.length);
       res.writeHead(200, {'Content-Type': 'multipart/x-mixed-replace; boundary=--daboundary',});
       res.write('--daboundary\nContent-Type: image/png\nContent-length: ' + pngdata.length + '\n\n');
       res.write(pngdata);
