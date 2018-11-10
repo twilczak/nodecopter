@@ -26,7 +26,7 @@ function server(client, opts, onLoad) {
   opts = opts || {};
 
   const server = http.createServer(function(req, res) {
-    // console.log(req.url);
+    console.log(req.url);
 
     if (!png) {
       png = client.getPngStream();
@@ -57,7 +57,7 @@ function server(client, opts, onLoad) {
         res.write(data);
         res.end();
       });
-    } else {
+    } else if(requestUrl === '/face-detector.js'){
       fs.readFile('./face-detector.js',function (err, data){
         res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
         res.write(data);

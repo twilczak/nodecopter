@@ -3,14 +3,13 @@ const myImage = document.getElementById('img');
 window.setInterval(() => {
       myImage.src = `http://localhost:8000/image?q=${(new Date()).valueOf()}`;
       detect();
-    }, 500);
+    }, 50);
 
 function detect() {
-    removeFaceElements();
     const faceDetector = new window.FaceDetector();
     faceDetector.detect(myImage)
         .then((faces) => {
-          console.log(faces);
+          removeFaceElements();
           faces.map((face) => {
             addFaceElement(face)
           })
@@ -24,9 +23,10 @@ function addFaceElement(face) {
   faceElement.setAttribute('class', 'face');
   faceElement.setAttribute('style', getFaceElementStyle(boundingBox));
 
-  getEyeLocations(landmarks)
-    .map(getEyeBox)
-    .forEach(eye => addEyeElement(faceElement, eye, top, left));
+  const locations = getEyeLocations(landmarks)
+    .reduce((accumulator, current) => accumulator.concat(current), []);
+  const eyeBox = getEyeBox(locations);
+  addEyeElement(faceElement, eyeBox, top, left);
 
   document.body.appendChild(faceElement)
 }
@@ -37,7 +37,7 @@ function removeFaceElements() {
 }
 
 function getFaceElementStyle({top, left, width, height} = {top: '0', left: '0', width: '100px', height: '100px' }) {
-  return `position: absolute; top: ${Math.trunc(top)}; left: ${Math.trunc(left)}; width: ${Math.trunc(width)}px; height: ${Math.trunc(height)}px; border: 3px solid white;`;
+  return `position: absolute; top: ${Math.trunc(top)}; left: ${Math.trunc(left)}; width: ${Math.trunc(width)}px; height: ${Math.trunc(height)}px; border: 3px solid white; border-radius: 20px;`;
 }
 
 function addEyeElement(face, eye, top, left) {
@@ -68,5 +68,5 @@ function getEyeBox(locations) {
 }
 
 function getEyeElementStyle({top, left, height, width}, faceTop, faceLeft) {
-  return `position: absolute; top: ${top - faceTop}px; left: ${left - faceLeft}px; height: ${height}; width: ${width}; background-color: black; border-3px solid black;`;
+  return `position: absolute; top: ${top - faceTop - 10}px; left: ${left - faceLeft - 10}px; height: ${height}; width: ${width}; background-color: black; border: 15px solid black; border-radius: 10px;`;
 }
