@@ -3,17 +3,22 @@ const myImage = document.getElementById('img');
 window.setInterval(() => {
       myImage.src = `http://localhost:8000/image?q=${(new Date()).valueOf()}`;
       detect();
-    }, 50);
+    }, 100);
 
 function detect() {
     const faceDetector = new window.FaceDetector();
-    faceDetector.detect(myImage)
-        .then((faces) => {
-          removeFaceElements();
-          faces.map((face) => {
-            addFaceElement(face)
-          })
-        }).catch(console.error);
+
+    const facesDetected = (faces) => {
+      removeFaceElements();
+      faces.map(face => {
+        addFaceElement(face);
+      });
+    };
+
+    faceDetector
+      .detect(myImage)
+      .then(facesDetected)
+      .catch(console.error);
 }
 
 function addFaceElement(face) {
@@ -37,7 +42,7 @@ function removeFaceElements() {
 }
 
 function getFaceElementStyle({top, left, width, height} = {top: '0', left: '0', width: '100px', height: '100px' }) {
-  return `position: absolute; top: ${Math.trunc(top)}; left: ${Math.trunc(left)}; width: ${Math.trunc(width)}px; height: ${Math.trunc(height)}px; border: 3px solid white; border-radius: 20px;`;
+  return `top: ${Math.trunc(top)}; left: ${Math.trunc(left)}; width: ${Math.trunc(width)}px; height: ${Math.trunc(height)}px;`;
 }
 
 function addEyeElement(face, eye, top, left) {
@@ -68,5 +73,5 @@ function getEyeBox(locations) {
 }
 
 function getEyeElementStyle({top, left, height, width}, faceTop, faceLeft) {
-  return `position: absolute; top: ${top - faceTop - 10}px; left: ${left - faceLeft - 10}px; height: ${height}; width: ${width}; background-color: black; border: 15px solid black; border-radius: 10px;`;
+  return `top: ${top - faceTop - 10}px; left: ${left - faceLeft - 20}px; height: ${height}; width: ${width};`;
 }
