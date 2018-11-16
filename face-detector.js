@@ -120,5 +120,5 @@ function getEyeBox(locations) {
 }
 
 function getEyeElementStyle({top, left, height, width}, faceTop, faceLeft) {
-  return `top: ${top - faceTop}px; left: ${left - faceLeft}px; height: ${height}; width: ${width};`;
+  return `top: ${top - faceTop - 10}px; left: ${left - faceLeft - 20}px; height: ${height}; width: ${width};`;
 }
