@@ -1,9 +1,12 @@
-const myImage = document.getElementById('img');
+const host = 'http://localhost:8000';
+const image = document.getElementById('img');
+const refreshInterval = 250;
+let posting = false;
 
 window.setInterval(() => {
-      myImage.src = `http://localhost:8000/image?q=${(new Date()).valueOf()}`;
+      image.src = `http://localhost:8000/image?q=${(new Date()).valueOf()}`;
       detect();
-    }, 100);
+    }, refreshInterval);
 
 function detect() {
     const faceDetector = new window.FaceDetector();
@@ -16,9 +19,53 @@ function detect() {
     };
 
     faceDetector
-      .detect(myImage)
+      .detect(image)
       .then(facesDetected)
+      .then(postActions)
       .catch(console.error);
+}
+
+function postActions() {
+  const img = document.querySelector('#img').getBoundingClientRect();
+  let face = document.querySelector('.face');
+  let body = JSON.stringify({actions: []});
+  if(face && !posting) {
+    posting = true;
+    console.log('posting ? ', posting);
+    face = face.getBoundingClientRect();
+    const actions = getActionsFromGeometry(img, face);
+    console.log('posting actions', actions);
+    body = JSON.stringify({actions});
+    fetch(`${host}/postActions`, {method: 'POST', body})
+      .then((response) => {
+        console.log('post complete > ', response);
+        posting = false;
+      });
+  }
+}
+
+function getActionsFromGeometry(img, face) {
+  const actions = [];
+
+  if(face.width <= 50) {
+    actions.push('front');
+  } else if(face.width >= 100) {
+    actions.push('back')
+  }
+
+  if (face.y < 75) {
+    actions.push('up');
+  } else if (face.y + face.height >= img.height - 75) {
+    actions.push('down');
+  }
+
+  if(face.x < (120)) {
+    actions.push('left');
+  } else if((face.x + face.width) > (img.width - 120)) {
+    actions.push('right');
+  }
+
+  return actions;
 }
 
 function addFaceElement(face) {
@@ -73,5 +120,5 @@ function getEyeBox(locations) {
 }
 
 function getEyeElementStyle({top, left, height, width}, faceTop, faceLeft) {
-  return `top: ${top - faceTop - 10}px; left: ${left - faceLeft - 20}px; height: ${height}; width: ${width};`;
+  return `top: ${top - faceTop}px; left: ${left - faceLeft}px; height: ${height}; width: ${width};`;
 }

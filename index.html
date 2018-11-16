@@ -4,19 +4,35 @@
             .face {
                 position: absolute;
                 border: 3px solid white;
-                border-radius: 20px;
+                border-radius: 3px;
             }
 
             .eye {
                 position: absolute;
                 background-color: black;
-                border: 15px solid black;
+                border: 3px solid black;
                 border-radius: 10px;
+            }
+
+            img,
+            .image-border {
+                position: absolute;
+                top: 0;
+                height: 360px;
+                width: 640px;
+            }
+
+            .image-border {
+                box-sizing: border-box;
+                border-style: solid;
+                border-color: rgba(0,0,0,.2);
+                border-width: 75px 120px;
             }
         </style>
     </head>
     <body>
-        <img id='img' style='position: absolute; top: 0'>
+        <img id='img'>
+        <div class="image-border"></div>
         <script src='face-detector.js'></script>
     </body>
 </html>

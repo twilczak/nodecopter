@@ -5,17 +5,25 @@ const client = arDrone.createClient();
 client.config('control:altitude_max', 3000);
 
 function fly(client) {
-  // client.takeoff();
-  //
-  // client
-  //   .after(5000, function() {
-  //     this.clockwise(0.5);
-  //   })
-  //   .after(1000, function() {
-  //     this.stop();
-  //     this.land();
-  //   });
-  //
+  client.stop();
+  client.takeoff();
+  console.log('[main] takeoff');
+
+  setTimeout(() => {
+    client.up(0.5);
+    console.log('[main] up');
+  }, 2000);
+
+  setTimeout(() => {
+    client.stop();
+
+  }, 2500);
+
+  setTimeout(() => {
+    console.log('[main] main stop');
+    client.stop();
+    client.land();
+  }, 30000);
 }
 
 function server(client, opts, onLoad) {
@@ -26,7 +34,6 @@ function server(client, opts, onLoad) {
   opts = opts || {};
 
   const server = http.createServer(function(req, res) {
-    console.log(req.url);
 
     if (!png) {
       png = client.getPngStream();
@@ -63,10 +70,47 @@ function server(client, opts, onLoad) {
         res.write(data);
         res.end();
       });
+    } else if(requestUrl === '/postActions') {
+      let body = '';
+      req.on('data', chunk => {body += chunk.toString(); });
+      req.on('end', () => {
+        handlePostActions(client, JSON.parse(body), (res));
+      })
     }
   });
 
   server.listen(opts.port || 8000);
+}
+
+function handlePostActions(client, body, res) {
+  const speed = 0.2;
+  const duration = 350;
+  const {actions} = body;
+  console.log('[handle actions]', actions);
+
+  if(actions.length) {
+
+    console.log(actions);
+    actions.forEach(action => {
+      console.log('[handle actions] client.' + action);
+      client[action].call(client, speed);
+    });
+
+    setTimeout(() => {
+      console.log('[handle actions] stopping');
+      client.stop();
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.write(actions.toString());
+      res.end('ok');
+    }, duration);
+
+  } else {
+    console.log('[handle actions] no actions');
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.write('no actions');
+    res.end('ok');
+  }
+
 }
 
 server(client,{ port: 8000 },() => fly(client));
